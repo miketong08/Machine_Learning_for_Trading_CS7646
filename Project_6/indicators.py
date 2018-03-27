@@ -3,6 +3,8 @@ CS7646 ML For Trading
 Project 6: Manual Strategy
 Indicators library
 Michael Tong (mtong31)
+
+This file provides technical indicators for use in the Manual Strategy function.
 """
 
 import pandas as pd

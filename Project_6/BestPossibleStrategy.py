@@ -3,6 +3,8 @@ CS7646 ML For Trading
 Project 6: Manual Strategy
 Best Possible Strategy Function
 Michael Tong (mtong31)
+
+This script provides a benchmark trading scheme for a single stock ticker.
 """
 
 import pandas as pd
@@ -12,7 +14,8 @@ from util import get_data, plot_data
 
 def testPolicy(symbol = "JPM", sd=dt.datetime(2008,1,1), ed=dt.datetime(2009,12,31), sv = 100000):
     df_prices = get_data([symbol], pd.date_range(sd, ed))
-    if symbol != 'SPY': # SPY is kept to maintain trading days, removed if not part of portfolio, get_data adds it automatically
+    # SPY is kept to maintain trading days, removed if not part of portfolio, get_data adds it automatically
+    if symbol != 'SPY': 
         df_prices = df_prices.drop(['SPY'], axis=1)
         
     df_prices['diff'] = df_prices.shift(-1)-df_prices

@@ -3,6 +3,9 @@ CS7646 ML For Trading
 Project 6: Manual Strategy
 Manual Strategy Function
 Michael Tong (mtong31)
+
+This script implements indicators and generates a trading dataframe. Indicator usage is hardcoded and optimized for 
+JPM from 2008 to the end of 2009.
 """
 
 import pandas as pd
@@ -12,12 +15,17 @@ import matplotlib.pyplot as plt
 import warnings
 
 from indicators import simple_ma, exp_ma, MACD, stoc_osc
-from marketsim import compute_portvals
+from marketsimcode import compute_portvals
 from BestPossibleStrategy import testPolicy as bps
 from util import get_data, plot_data
 
-def testPolicy(df):
-    """Returns a trade dataframe based on BB, MACD, and Stoch Osc"""
+def testPolicy(symbol= 'JPM', sd= dt.datetime(2008,1,1), ed= dt.datetime(2009,12,31), sv= 100000):
+    """Accepts a prices df, returns a trade dataframe based on BB, MACD, and Stoch Osc"""
+    
+    df = get_data([symbol], pd.date_range(sd,ed))
+    if symbol != 'SPY':
+        df.drop('SPY',axis=1,inplace=True)
+    
     # BB was implemented into the SMA, the threshold value had been iteratively optimized
     sma, upper, lower = simple_ma(df, window=19, bollinger=True, threshold=1.45102)
     
@@ -87,24 +95,24 @@ def testPolicy(df):
     return(df_trades)
     
 def plot_indicators(df, *args):
-    """Plots indicators of a given df, returns the df with indicators"""
+    """Accepts a df and indicator df's, returns a plot of the df with indicators"""
     fig = plt.figure(figsize=(10,5), dpi=120)
-    plt.plot(df, color='b', label='Share Price')
+    plt.plot(df, color='k', label='JPM')
     plt.rcParams.update({'font.size': 16})
     plt.xlabel('Date', fontsize=18)
     plt.ylabel('Share Price', fontsize=18)
     plt.xticks(rotation=45)
-    fig.suptitle('SMA of Share Price')
+    fig.suptitle('Bollinger Bands')
     
     if len(args)>0:
         for i in args:
-            plt.plot(i, label=i.name, color='y')
+            plt.plot(i, label=i.name)
             
     fig.legend(loc=4, bbox_to_anchor=(0.85,0.25))            
     plt.show()
     
 def plot_oscillator(df1, df2, title):
-    """Simple function that accepts two df's and a plot title, returns a plot of the oscillators"""
+    """Function that accepts two df's and a plot title, returns a plot of the oscillators"""
     fig = plt.figure(figsize=(10,5), dpi=120)
     plt.plot(df1, color='y', label=df1.name)
     plt.plot(df2, color='b', label=df2.name)
@@ -163,21 +171,18 @@ def print_stats(df):
     d_returns.iloc[0] = 0
     d_returns       = d_returns[1:]
     
-    #Below are desired output values
-    
-    #Cumulative return (final - initial) - 1
+    # Below are desired output values   
+    # Cumulative return (final - initial) - 1
     cr   = port_value[-1] / port_value[0] - 1
-    #Average daily return
+    # Average daily return
     adr  = d_returns.mean()
-    #Standard deviation of daily return
+    # Standard deviation of daily return
     sddr = d_returns.std()
-    #Sharpe ratio ((Mean - Risk free rate)/Std_dev)
+    # Sharpe ratio ((Mean - Risk free rate)/Std_dev)
     daily_rfr     = (1.0)**(1/252) - 1 #Should this be sampling freq instead of 252? 
     sr            = (d_returns - daily_rfr).mean() / sddr
     sr_annualized = sr * (252**0.5)
 
-
-    # Compare portfolio against $SPX
     print("\nDate Range: {} to {}".format(port_value.index[0], port_value.index[-1],end='\n'))
     print("Sharpe Ratio of Fund: {}".format(sr_annualized))
     print("Cumulative Return of Fund: {}".format(cr))
@@ -190,37 +195,42 @@ def author():
     
 if __name__ == '__main__':
     warnings.simplefilter(action='ignore', category=(FutureWarning, DeprecationWarning))
-
+    
+    sym = 'JPM'
     sd = dt.datetime(2008,1,1)
     ed = dt.datetime(2009,12,31)
-    df = get_data(['JPM'], pd.date_range(sd,ed))
-    df_spy = df['SPY']
-    df.drop('SPY',axis=1,inplace=True)
+    
+    df = get_data([sym], pd.date_range(sd,ed))
+    if sym != 'SPY':
+        df.drop('SPY',axis=1,inplace=True)
+    
     df_normed = df/df.ix[0]
     
     b = bps('JPM',sd,ed)
     best = compute_portvals(b)
     
-    manual = testPolicy(df)
+    manual= testPolicy(sym, sd, ed)
     value = compute_portvals(manual)
     
-    df_spy_hold = pd.DataFrame(index=df_spy.index)
-    df_spy_hold['SPY'] = 0
-    df_spy_hold.iloc[0,0] = int((2000*df.iloc[0,0])/df_spy.iloc[0])
+    bm = manual.copy()
+    bm.ix[:] = 0
+    bm.ix[0,0] = 1000
     
-    df_spy_val = compute_portvals(df_spy_hold)
+    bm_value = compute_portvals(bm)
+    print_stats(bm_value)
     
-    
+
+#    # normalized
 #    value = value/value[0]
 #    best = best/best[0]
     
 ##      Below is for plot generation    
 #    bv = bps('JPM',sd,ed)    
-#
-#    fig = plt.figure(figsize=(10,6), dpi=120)
-#    plt.rcParams.update({'font.size': 16})
-#    plt.xlabel('Date', fontsize=18)
-#    plt.xticks(rotation=45)
+
+    fig = plt.figure(figsize=(10,6), dpi=120)
+    plt.rcParams.update({'font.size': 16})
+    plt.xlabel('Date', fontsize=18)
+    plt.xticks(rotation=45)
     
 ##      Below is for performance
 #    plt.plot(value, color='k')
@@ -228,29 +238,30 @@ if __name__ == '__main__':
 #    plt.ylabel('Proportion Gain')
 #    plt.legend(['Manual Strategy'], loc=4, prop={'size' : 15})    
 
-#    plt.plot(b, color='b')    
-#    fig.suptitle('Best Possible Performance')
-#    plt.ylabel('Proportion Gain')
-#    plt.legend(['Best Possible Strategy'], loc=4, prop={'size':15})
-##
-#    plt.plot(best/best[0], color='b', label='Best Strategy')    
-#    plt.plot(value/value[0], color='k', label='Manual Strategy')
-#    plt.plot(df_spy_val/df_spy_val[0], color= 'y', label='SPY')
-#    fig.suptitle('Best Strategy vs Manual Strategy vs SPY')
+    plt.plot(value/value[0], color='k', label='Manual Strategy')  
+    plt.plot(bm_value/bm_value[0], color='b', label='Benchmark')
+    fig.suptitle('In Sample Manual Strategy vs Benchmark')
+    plt.ylabel('Proportional Gain')
+    plt.legend(loc=4, prop={'size':15})
+###
+#    plt.plot(best/best[0], color='k', label='Best Strategy')    
+#    plt.plot(value/value[0], color='y', label='Manual Strategy')
+#    plt.plot(bm_value/bm_value[0], color= 'b', label='Benchmark')
+#    fig.suptitle('Best Strategy vs Manual Strategy vs Benchmark Out of Sample')
 #    plt.ylabel('Proportional Gain')
 #    plt.legend(loc=7, prop={'size':15})
 
 #    plt.plot(df,color='k')
-#    fig.suptitle('In Sample Long/Short Positions', fontsize=20)
+#    fig.suptitle('Out of Sample Long/Short Positions', fontsize=20)
 #    plt.ylabel('Share Price', fontsize=16)
-#    plt.legend(['Manual Strategy'], loc=4, prop={'size' : 15})
-
+#    plt.legend(['JPM'], loc=4, prop={'size' : 15})
+#
 ##      Below is to show vert lines
 #    for i in manual[manual[manual.columns[0]] != 0].index:
 #        if manual.ix[i,0] > 0:
 #            plt.axvline(x=i, color='g')
 #        elif manual.ix[i,0] < 0:
 #            plt.axvline(x=i, color='r')
-
+#
     plt.show()
     
