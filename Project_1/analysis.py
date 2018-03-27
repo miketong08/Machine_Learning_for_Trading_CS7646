@@ -7,7 +7,10 @@ Mike Tong (mtong31)
 import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
+import os
+os.chdir("../")
 from util import get_data, plot_data
+
 
 def assess_portfolio(
     sd = dt.datetime(2008,1,1), ed = dt.datetime(2009,1,1), \
@@ -31,7 +34,6 @@ def assess_portfolio(
     dates = pd.date_range(sd.date(), ed.date())
     df_all = get_data(syms, dates)  # automatically adds SPY
     df = df_all[syms] 
-    
     # get daily portfolio value    
     df_nrm          = df / df.ix[0,:] 
     allocated       = df_nrm * allocs

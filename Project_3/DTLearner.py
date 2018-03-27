@@ -30,8 +30,7 @@ class DTLearner(object):
     
     def highest_correlation(self, df):
         """Returns the highest correlated value by it's df index"""
-        correlations = np.tril(np.array(df.corr()), k=-1)
-
+        correlations = np.tril(np.array(df.corr()), k=-1) # takes the lower half of the correlation table without the diagonal.
         return(abs(np.nan_to_num(correlations[-1])).argmax())
     
     def build_tree(self, data):         
