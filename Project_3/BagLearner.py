@@ -13,7 +13,6 @@ class BagLearner(object):
     def __init__(self, learner, kwargs = {}, bags=20, boost=False, verbose=False):
         
         learners = []
-        
         for i in range(bags):
             learners.append(learner(**kwargs))
             
@@ -64,7 +63,7 @@ class BagLearner(object):
         queries = [self.query_trees(Xtest, i) for i in self.trees]
         return(np.average(queries,axis=0))
             
-#if __name__ =="__main__":
+if __name__ =="__main__":
 #    import os
 #    os.chdir("/home/mike/OMCS/CS7646-ML For Trading/CS7646_Assignments/data/decision_tree_data")
 #    test = pd.read_csv('Istanbul.csv', index_col='date')
@@ -77,20 +76,20 @@ class BagLearner(object):
 #    a = learner.query(x)
 #    print(a)
 #    
-#    test = np.array([
-#            [0.61, 0.63, 8.4, 3],
-#            [0.885, 0.33, 9.1, 4],
-#            [0.56, 0.5, 9.4, 6],
-#            [0.735, 0.57, 9.8, 5],
-#            [0.32, 0.78, 10, 6],
-#            [0.26, 0.63, 11.8, 8],
-#            [0.5, 0.68, 10.5, 7],
-#            [0.725, 0.39, 10.9, 5],
-#        ])
-#    learner = BagLearner(learner = rt.RTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)
-#    x = test[:,0:-1]
-#    y = test[:, -1]
-#    test = learner.addEvidence(x, y)
-#    #print(learner.trees)
-#    a=learner.query(x)
-#    print(a)
+    test = np.array([
+            [0.61, 0.63, 8.4, 3],
+            [0.885, 0.33, 9.1, 4],
+            [0.56, 0.5, 9.4, 6],
+            [0.735, 0.57, 9.8, 5],
+            [0.32, 0.78, 10, 6],
+            [0.26, 0.63, 11.8, 8],
+            [0.5, 0.68, 10.5, 7],
+            [0.725, 0.39, 10.9, 5],
+        ])
+    learner = BagLearner(learner = rt.RTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)
+    x = test[:,0:-1]
+    y = test[:, -1]
+    test = learner.addEvidence(x, y)
+    #print(learner.trees)
+    a=learner.query(x)
+    print(a)
