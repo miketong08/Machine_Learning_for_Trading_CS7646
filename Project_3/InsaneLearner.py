@@ -10,11 +10,11 @@ import RTLearner as rt
 import BagLearner as bl
 
 class InsaneLearner(object):
-    def __init__(self, bag_learner=bl.BagLearner, learner=dt.DTLearner, kwargs = {}, bags=10, boost=False, verbose=False):
+    def __init__(self, bag_learner=bl.BagLearner, learner=dt.DTLearner, kwargs = {}, bags=20, boost=False, verbose=False):
         
         bag_learners = []
         for i in range(bags):
-            bag_learners.append(bag_learner(learner, kwargs=kwargs))
+            bag_learners.append(bag_learner(learner, kwargs=kwargs, bags=bags))
             
         self.bag_learners = bag_learners
         self.boost = boost #future project
@@ -30,17 +30,18 @@ class InsaneLearner(object):
             
 if __name__ =="__main__":
 #    import os
+#    import pandas as pd
 #    os.chdir("/home/mike/OMCS/CS7646-ML For Trading/CS7646_Assignments/data/decision_tree_data")
 #    test = pd.read_csv('Istanbul.csv', index_col='date')
 #    test = test.rename(columns={x:y for x,y in zip(test.columns, range(len(test.columns)))})
 #    test = np.array(test)
 #    x = test[:,:-1]
 #    y = test[:,-1]
-#    learner = BagLearner(learner = rt.RTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)
+#    learner = InsaneLearner(learner = rt.RTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)
 #    t = learner.addEvidence(x,y)
-#    a = learner.query(x)
+#    a = learner.query(x[:10])
 #    print(a)
-#    
+    
     test = np.array([
             [0.61, 0.63, 8.4, 3],
             [0.885, 0.33, 9.1, 4],
@@ -51,7 +52,7 @@ if __name__ =="__main__":
             [0.5, 0.68, 10.5, 7],
             [0.725, 0.39, 10.9, 5],
         ])
-    learner = InsaneLearner(learner=rt.RTLearner, kwargs = {"leaf_size":1}, bags = 10, boost = False, verbose = False)
+    learner = InsaneLearner(learner=dt.DTLearner, kwargs = {"leaf_size":1}, bags = 20, boost = False, verbose = False)
     x = test[:,0:-1]
     y = test[:, -1]
     test = learner.addEvidence(x, y)
