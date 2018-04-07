@@ -77,3 +77,25 @@ The API this project is build to is:
 df_trades = ms.testPolicy(symbol, sd, ed, sv)
 ```
 Which returns a orders dataframe that can be run through a modified version of the Marketsim function to generate a portfolio value. 
+
+***
+[__Project 7 (QLearning robot)__](http://quantsoftware.gatech.edu/Qlearning_robot): The goal of this project is to develop a QLearner class that will provide a robot in a 2D world the ability to navigate using Q learning. This script establishes a Q-Table, and has the optional ability to implement Dyna-Q.
+The API (pseudocode) this project is build to is:
+```python
+Instantiate the learner with the constructor QLearner()
+s = initial_location
+a = querysetstate(s)
+s_prime = new location according to action a
+r = -1.0
+while not converged:
+    a = query(s_prime, r) 
+    s_prime = new location according to action a
+    if s_prime == goal:
+        r = +1
+        s_prime = start location
+    else if s_prime == quicksand:
+        r = -100
+    else:
+        r = -1
+```
+Which will return the robot's cost of navigating to a location using the learning method.
