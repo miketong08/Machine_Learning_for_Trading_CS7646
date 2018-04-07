@@ -1,5 +1,9 @@
 /.ipynb_checkpoints
-/Project_3/DTLearner_*
-/Project_3/RTLearner_*
+/Project_3*/DTLearner_*
+/Project_3*/RTLearner_*
 /*/__py*
-
+/*/*.zip
+/Project_7*/*.txt
+/Project_7*/qlearning_robot
+/data/*.txt
+/.pytest*
