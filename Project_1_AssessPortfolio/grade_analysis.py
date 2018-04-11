@@ -9,11 +9,10 @@ Copyright 2017, Georgia Tech Research Corporation
 Atlanta, Georgia 30332-0415
 All Rights Reserved
 """
-
+import os
+os.chdir("../")
 import pytest
 from grading.grading import grader, GradeResult, run_with_timeout, IncorrectOutput
-
-import os
 import sys
 import traceback as tb
 
@@ -21,9 +20,7 @@ import pandas as pd
 from collections import namedtuple, OrderedDict
 
 from util import get_data
-
 import datetime
-
 # Student code
 # Spring '16 renamed package to just "analysis" (BPH)
 main_code = "analysis"  # module name to import
@@ -144,7 +141,6 @@ def test_analysis(inputs, outputs, description, grader):
 
     Requires test inputs, expected outputs, description, and a grader fixture.
     """
-
     points_earned = 0.0  # initialize points for this test case
     try:
         # Try to import student code (only once)
@@ -219,4 +215,5 @@ def test_analysis(inputs, outputs, description, grader):
 
 
 if __name__ == "__main__":
+    os.chdir("/home/mike/OMCS/CS7646-ML For Trading/CS7646_Assignments/Project_1_AssessPortfolio")
     pytest.main(["-s", __file__])

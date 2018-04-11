@@ -8,7 +8,8 @@ import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
-os.chdir("../")
+os.chdir("/home/mike/OMCS/CS7646-ML For Trading")
+
 from util import get_data, plot_data
 
 
@@ -39,10 +40,10 @@ def assess_portfolio(
     allocated       = df_nrm * allocs
     position_values = allocated * sv
     port_value      = position_values.sum(axis = 1)
+    
     # daily returns (y_{t} = x_{t}/x_{t-1} - 1
     d_returns       = port_value.copy() 
-    d_returns       = (port_value/port_value.shift(1) - 1)
-    d_returns       = d_returns[1:]
+    d_returns       = (port_value/port_value.shift(1) - 1)[1:]
     
     # Below are desired output values
     
