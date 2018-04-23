@@ -99,3 +99,14 @@ while not converged:
         r = -1
 ```
 Which will return the robot's cost of navigating to a location using the learning method.
+
+***
+[__Project 8 (Strategy Learner)__](http://quantsoftware.gatech.edu/Strategy_learner): The goal of this project is to develop a machine learning trader based on previous projects to compete with the Project 6 ManaulStrategy learner. A random forest approach was chosen, and a report of this porject is provided within the documentation. This learner accepts a single ticker and training dates, which generates technical indicator values via Bollinger Bands, MACD, Stochastic Oscillator, and optional SMA, CCI, and EMA methods. These indicator values are then trained against historical price movements. Once training is complete, the learner can accept new technical indicator values and output a trading dataframe with buy/hold/sell signals.
+The API this project is build to is:
+```python
+import StrategyLearner as sl
+learner = sl.StrategyLearner(verbose = False, impact = 0.000) # constructor
+learner.addEvidence(symbol = "AAPL", sd=dt.datetime(2008,1,1), ed=dt.datetime(2009,12,31), sv = 100000) # training phase
+df_trades = learner.testPolicy(symbol = "AAPL", sd=dt.datetime(2010,1,1), ed=dt.datetime(2011,12,31), sv = 100000) # testing phase
+```
+Which will return a trading dataframe with -1 to indicate sells, 0 to indicate holds, and 1 to indicate buys.
